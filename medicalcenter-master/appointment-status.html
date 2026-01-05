@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Appointment Status</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<style>
+body{
+  font-family:Arial, sans-serif;
+  background:#f1f8e9;
+  padding:40px;
+}
+.box{
+  max-width:650px;
+  margin:auto;
+  background:white;
+  padding:30px;
+  border-radius:12px;
+  box-shadow:0 6px 15px rgba(0,0,0,0.2);
+}
+.success{
+  color:#2e7d32;
+}
+.error{
+  color:#c62828;
+}
+table{
+  width:100%;
+  border-collapse:collapse;
+  margin-top:20px;
+}
+td{
+  padding:8px;
+  border-bottom:1px solid #ddd;
+}
+</style>
+</head>
+
+<body>
+
+<div class="box" id="resultBox"></div>
+
+<script>
+const status = localStorage.getItem("appointmentStatus");
+const box = document.getElementById("resultBox");
+
+if(status === "success"){
+  const data = JSON.parse(localStorage.getItem("appointmentData"));
+
+  box.innerHTML = `
+    <h2 class="success">✅ Appointment Booked Successfully</h2>
+    <table>
+      <tr><td><b>Name</b></td><td>${data.name}</td></tr>
+      <tr><td><b>Age</b></td><td>${data.age}</td></tr>
+      <tr><td><b>Gender</b></td><td>${data.gender}</td></tr>
+      <tr><td><b>Date</b></td><td>${data.date}</td></tr>
+      <tr><td><b>Time</b></td><td>${data.time}</td></tr>
+      <tr><td><b>Issue</b></td><td>${data.issue}</td></tr>
+      <tr><td><b>Email</b></td><td>${data.email}</td></tr>
+      <tr><td><b>Phone</b></td><td>${data.phone}</td></tr>
+      <tr><td><b>Doctor</b></td><td>${data.doctor}</td></tr>
+      <tr><td><b>Address</b></td><td>${data.address}</td></tr>
+    </table>
+    <p>👨‍⚕ Doctor will contact you shortly.</p>
+  `;
+}
+else{
+  box.innerHTML = `
+    <h2 class="error">❌ Appointment Rejected</h2>
+    <p>Invalid phone number or missing details.</p>
+  `;
+}
+</script>
+
+</body>
+</html>

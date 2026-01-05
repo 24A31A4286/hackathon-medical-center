@@ -1,0 +1,297 @@
+<!doctype html>
+<html class="no-js" lang="zxx">
+
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <title> Diet Planner - MediVerse</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="assets/css/bootstrap.min.css">
+    <link rel="stylesheet" href="assets/css/style.css">
+    <link rel="stylesheet" href="assets/css/fontawesome-all.min.css">
+    <style>
+        .diet-box {
+            background: white;
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        .result-box {
+            background: #f0fdf4;
+            padding: 25px;
+            border-radius: 15px;
+            border-left: 5px solid #22c55e;
+            margin-top: 20px;
+            display: none;
+        }
+
+        .meal-card {
+            background: white;
+            padding: 15px;
+            margin: 10px 0;
+            border-radius: 10px;
+            border: 1px solid #e5e7eb;
+        }
+
+        .meal-title {
+            color: #15803d;
+            font-weight: bold;
+            text-transform: uppercase;
+            font-size: 14px;
+        }
+    </style>
+</head>
+
+<body>
+    <header>
+        <div class="header-area">
+            <div class="main-header header-sticky">
+                <div class="container-fluid">
+                    <div class="row align-items-center">
+                        <div class="col-xl-2 col-lg-2 col-md-1">
+                            <div class="logo">
+                                <a href="index.html"><img src="assets/img/logo/logo.png" alt=""></a>
+                            </div>
+                        </div>
+                        <div class="col-xl-10 col-lg-10 col-md-10">
+                            <div class="menu-main d-flex align-items-center justify-content-end">
+                                <div class="main-menu f-right d-none d-lg-block">
+                                    <nav>
+                                        <ul id="navigation">
+                                            <li><a href="index.html">Dashboard</a></li>
+                                            <li><a href="appointments.html">Appointments</a></li>
+                                            <li><a href="medicine.html">Medicine</a></li>
+                                            <li><a href="organs.html">Organs</a></li>
+                                            <li><a href="diet.html">Diet Plan</a></li>
+                                            <li><a href="#" onclick="logout()">Logout</a></li>
+                                        </ul>
+                                    </nav>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <main>
+        <div class="slider-area2">
+            <div class="slider-height2 d-flex align-items-center">
+                <div class="container">
+                    <div class="row">
+                        <div class="col-xl-12">
+                            <div class="hero-cap hero-cap2 text-center">
+                                <h2>Healthy Diet & Nutrition Planner</h2>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <section class="contact-section">
+            <div class="container">
+                <div class="row justify-content-center">
+                    <div class="col-lg-8">
+                        <div class="diet-box">
+                            <h3 class="mb-4 text-center" style="color: #0a4dbf;">🥗 Generate Your Meal Plan</h3>
+                            <form onsubmit="generateDiet(event)">
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <div class="form-group">
+                                            <label>Height (cm)</label>
+                                            <input type="number" id="height" class="form-control" placeholder="e.g. 175"
+                                                required>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="form-group">
+                                            <label>Weight (kg)</label>
+                                            <input type="number" id="weight" class="form-control" placeholder="e.g. 70"
+                                                required>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="form-group">
+                                            <label>Gender</label>
+                                            <select id="gender" class="form-control">
+                                                <option value="Male">Male</option>
+                                                <option value="Female">Female</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="form-group">
+                                            <label>Goal</label>
+                                            <select id="goal" class="form-control">
+                                                <option value="Maintenance">Maintain Weight</option>
+                                                <option value="Weight Loss">Weight Loss</option>
+                                                <option value="Weight Gain">Weight Gain</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                </div>
+                                <button type="submit" class="button boxed-btn w-100"
+                                    style="background: #0a4dbf; color: white;">Generate Plan</button>
+                            </form>
+                        </div>
+
+                        <!-- Result Section -->
+                        <div id="result" class="result-box">
+                            <div class="text-center mb-4">
+                                <h4 id="plan-title" style="color: #166534; font-weight: bold;"></h4>
+                                <p>BMI: <span id="bmi-val" style="font-weight: bold;"></span> (<span
+                                        id="bmi-status"></span>) | Calories: <span id="calories"></span></p>
+                            </div>
+
+                            <div class="meal-card">
+                                <div class="meal-title">🍳 Breakfast</div>
+                                <p id="breakfast"></p>
+                            </div>
+                            <div class="meal-card">
+                                <div class="meal-title">🥗 Lunch</div>
+                                <p id="lunch"></p>
+                            </div>
+                            <div class="meal-card">
+                                <div class="meal-title">🍽️ Dinner</div>
+                                <p id="dinner"></p>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+        </section>
+        </div>
+        </div>
+        </div>
+        </section>
+
+        <!-- HEALTH ANALYTICS SECTION -->
+        <section class="about-area section-padding2">
+            <div class="container">
+                <div class="row justify-content-center">
+                    <div class="col-lg-8">
+                        <div class="section-tittle text-center mb-30">
+                            <h2>Your Health Analytics</h2>
+                            <p>Track your health progress alongside your diet plan.</p>
+                        </div>
+                        <div class="analytics-box"
+                            style="background: white; padding: 30px; border-radius: 15px; box-shadow: 0 4px 15px rgba(0,0,0,0.1);">
+                            <div class="row align-items-center">
+                                <div class="col-md-6">
+                                    <canvas id="healthChart"></canvas>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="mt-4 text-center">
+                                        <h5>Medicine Adherence</h5>
+                                        <p class="text-muted">Last 7 Days</p>
+                                        <div class="progress"
+                                            style="height: 25px; border-radius: 12px; background-color: #e9ecef;">
+                                            <div class="progress-bar bg-success" role="progressbar"
+                                                style="width: 85%; border-radius: 12px;" aria-valuenow="85"
+                                                aria-valuemin="0" aria-valuemax="100">85%</div>
+                                        </div>
+                                    </div>
+                                    <div class="mt-4 text-center">
+                                        <h5 class="text-info">Health Score</h5>
+                                        <h2 style="font-weight: bold; color: #0a4dbf;">88/100</h2>
+                                        <p class="text-muted">Great! You are keeping up well.</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    <script>
+        const API_URL = "http://localhost:5000/api";
+        const currentUser = JSON.parse(localStorage.getItem("user"));
+        if (!currentUser) window.location.href = "login.html";
+
+        function logout() {
+            localStorage.removeItem("user");
+            window.location.href = "login.html";
+        }
+
+        async function generateDiet(e) {
+            e.preventDefault();
+            const btn = e.target.querySelector("button");
+            btn.innerHTML = "Generating...";
+            btn.disabled = true;
+
+            const data = {
+                height: document.getElementById("height").value,
+                weight: document.getElementById("weight").value,
+                gender: document.getElementById("gender").value,
+                goal: document.getElementById("goal").value
+            };
+
+            try {
+                // Using Manual Backend Logic (Reliable)
+                const res = await fetch(`${API_URL}/diet`, {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify(data)
+                });
+                const result = await res.json();
+
+                // Simple UI Update
+                document.getElementById("plan-title").innerText = result.plan.title;
+                document.getElementById("bmi-val").innerText = result.bmi;
+                document.getElementById("bmi-status").innerText = result.status;
+                document.getElementById("calories").innerText = result.plan.calories;
+
+                document.getElementById("breakfast").innerText = result.plan.breakfast;
+                document.getElementById("lunch").innerText = result.plan.lunch;
+                document.getElementById("dinner").innerText = result.plan.dinner;
+
+                document.getElementById("result").style.display = "block";
+
+            } catch (err) {
+                alert("Error generating plan. Please try again.");
+                console.error(err);
+            } finally {
+                btn.innerHTML = "Generate Plan";
+                btn.disabled = false;
+            }
+        }
+
+        // --- RENDER CHARTS ---
+        document.addEventListener("DOMContentLoaded", () => {
+            const ctx = document.getElementById('healthChart').getContext('2d');
+            new Chart(ctx, {
+                type: 'doughnut',
+                data: {
+                    labels: ['Healthy', 'Exercise', 'Sleep'],
+                    datasets: [{
+                        data: [60, 25, 15],
+                        backgroundColor: ['#22c55e', '#3b82f6', '#facc15'],
+                        borderWidth: 0,
+                        hoverOffset: 4
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    plugins: {
+                        legend: { position: 'bottom' },
+                        title: {
+                            display: true,
+                            text: 'Wellness Distribution'
+                        }
+                    }
+                }
+            });
+        });
+    </script>
+</body>
+
+</html>

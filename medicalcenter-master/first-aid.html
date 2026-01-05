@@ -1,0 +1,280 @@
+<!doctype html>
+<html class="no-js" lang="zxx">
+
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <title> First Aid Guide - MediVerse</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="assets/css/bootstrap.min.css">
+    <link rel="stylesheet" href="assets/css/style.css">
+    <link rel="stylesheet" href="assets/css/fontawesome-all.min.css">
+    <style>
+        .aid-card {
+            background: white;
+            padding: 25px;
+            border-radius: 15px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.08);
+            margin-bottom: 30px;
+            border-left: 6px solid #ef4444;
+            /* Red for emergency */
+            transition: transform 0.2s;
+            cursor: pointer;
+        }
+
+        .aid-card:hover {
+            transform: translateY(-5px);
+        }
+
+        .aid-icon {
+            font-size: 40px;
+            color: #d32f2f;
+            margin-bottom: 15px;
+        }
+
+        .modal-body ol {
+            padding-left: 20px;
+        }
+
+        .modal-body ol li {
+            margin-bottom: 10px;
+            font-size: 16px;
+        }
+
+        .emergency-float {
+            position: fixed;
+            bottom: 30px;
+            left: 30px;
+            /* Left side to not overlap with bot */
+            background: #dc2626;
+            color: white;
+            padding: 15px 25px;
+            border-radius: 50px;
+            font-weight: bold;
+            box-shadow: 0 4px 15px rgba(220, 38, 38, 0.5);
+            z-index: 1000;
+            text-decoration: none;
+            font-size: 18px;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0% {
+                transform: scale(1);
+            }
+
+            50% {
+                transform: scale(1.05);
+            }
+
+            100% {
+                transform: scale(1);
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <header>
+        <div class="header-area">
+            <div class="main-header header-sticky">
+                <div class="container-fluid">
+                    <div class="row align-items-center">
+                        <div class="col-xl-2 col-lg-2 col-md-1">
+                            <div class="logo">
+                                <a href="index.html"><img src="assets/img/logo/logo.png" alt=""></a>
+                            </div>
+                        </div>
+                        <div class="col-xl-10 col-lg-10 col-md-10">
+                            <div class="menu-main d-flex align-items-center justify-content-end">
+                                <div class="main-menu f-right d-none d-lg-block">
+                                    <nav>
+                                        <ul id="navigation">
+                                            <li><a href="index.html">Dashboard</a></li>
+                                            <li><a href="appointments.html">Appointments</a></li>
+                                            <li><a href="medicine.html">Medicine</a></li>
+                                            <li><a href="organs.html">Organs</a></li>
+                                            <li><a href="diet.html">Diet Plan</a></li>
+                                            <li><a href="first-aid.html">First Aid</a></li>
+                                            <li><a href="#" onclick="logout()">Logout</a></li>
+                                        </ul>
+                                    </nav>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <main>
+        <div class="slider-area2">
+            <div class="slider-height2 d-flex align-items-center">
+                <div class="container">
+                    <div class="row">
+                        <div class="col-xl-12">
+                            <div class="hero-cap hero-cap2 text-center">
+                                <h2>🚑 First Aid Guidance</h2>
+                                <p style="color: white; font-size: 18px;">Emergency Steps while you wait for the
+                                    ambulance</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <section class="contact-section">
+            <div class="container">
+                <div class="row">
+                    <!-- Card 1: CPR -->
+                    <div class="col-md-4">
+                        <div class="aid-card" onclick="openModal('CPR')">
+                            <div class="aid-icon"><i class="fas fa-heartbeat"></i></div>
+                            <h3>CPR (Cardiac Arrest)</h3>
+                            <p>Steps to perform CPR on an unconscious person.</p>
+                        </div>
+                    </div>
+
+                    <!-- Card 2: Severe Bleeding -->
+                    <div class="col-md-4">
+                        <div class="aid-card" onclick="openModal('BLEEDING')">
+                            <div class="aid-icon"><i class="fas fa-tint"></i></div>
+                            <h3>Severe Bleeding</h3>
+                            <p>How to stop bleeding and apply tourniquets.</p>
+                        </div>
+                    </div>
+
+                    <!-- Card 3: Burns -->
+                    <div class="col-md-4">
+                        <div class="aid-card" onclick="openModal('BURNS')">
+                            <div class="aid-icon"><i class="fas fa-fire"></i></div>
+                            <h3>Burns & Scalds</h3>
+                            <p>Immediate actions for chemical or heat burns.</p>
+                        </div>
+                    </div>
+
+                    <!-- Card 4: Choking -->
+                    <div class="col-md-4">
+                        <div class="aid-card" onclick="openModal('CHOKING')">
+                            <div class="aid-icon"><i class="fas fa-hands"></i></div>
+                            <h3>Choking</h3>
+                            <p>Heimlich Maneuver technique.</p>
+                        </div>
+                    </div>
+
+                    <!-- Card 5: Heart Attack -->
+                    <div class="col-md-4">
+                        <div class="aid-card" onclick="openModal('HEART')">
+                            <div class="aid-icon"><i class="fas fa-procedures"></i></div>
+                            <h3>Heart Attack</h3>
+                            <p>Recognizing symptoms and immediate aid.</p>
+                        </div>
+                    </div>
+
+                    <!-- Card 6: Stroke -->
+                    <div class="col-md-4">
+                        <div class="aid-card" onclick="openModal('STROKE')">
+                            <div class="aid-icon"><i class="fas fa-brain"></i></div>
+                            <h3>Stroke</h3>
+                            <p>FAST check and positioning.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Emergency Float Button -->
+        <a href="tel:102" class="emergency-float">
+            <i class="fas fa-phone-alt"></i> Call Ambulance (102)
+        </a>
+
+        <!-- Modal -->
+        <div id="aidModal"
+            style="display:none; position: fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.5); z-index:9999; align-items:center; justify-content:center;">
+            <div
+                style="background:white; padding:30px; border-radius:10px; width:90%; max-width:600px; position: relative;">
+                <span onclick="closeModal()"
+                    style="position: absolute; right: 20px; top: 10px; font-size: 30px; cursor: pointer;">&times;</span>
+                <h2 id="modalTitle" style="color: #d32f2f;"></h2>
+                <div id="modalContent" class="modal-body"></div>
+                <button onclick="closeModal()" class="button boxed-btn" style="margin-top:20px;">Close</button>
+            </div>
+        </div>
+
+    </main>
+
+    <script>
+        const content = {
+            CPR: `
+                <ol>
+                    <li><strong>Check Response:</strong> Shake shoulders and ask "Are you okay?".</li>
+                    <li><strong>Call Ambulance:</strong> Dial 102 immediately.</li>
+                    <li><strong>Check Breathing:</strong> Look for chest movement. If not breathing, start CPR.</li>
+                    <li><strong>Compressions:</strong> Push hard and fast in the center of the chest (100-120 bpm).</li>
+                    <li><strong>Breaths:</strong> Give 2 rescue breaths after every 30 compressions (optional if untrained).</li>
+                    <li>Continue until help arrives.</li>
+                </ol>`,
+            BLEEDING: `
+                <ol>
+                    <li><strong>Apply Pressure:</strong> Use a clean cloth/gauge and press directly on the wound.</li>
+                    <li><strong>Elevate:</strong> Raise the injured part above heart level if possible.</li>
+                    <li><strong>Do Not Remove:</strong> If cloth soaks through, add more layers. Don't remove the first one.</li>
+                    <li><strong>Tourniquet:</strong> Use ONLY for life-threatening limb bleeding. Tie tightly above wound.</li>
+                </ol>`,
+            BURNS: `
+                <ol>
+                    <li><strong>Cool the Burn:</strong> Hold under cool running water for 10-20 minutes. (NO ICE).</li>
+                    <li><strong>Remove Jewelry:</strong> Take off rings/watches before swelling starts.</li>
+                    <li><strong>Cover:</strong> Use cling film or a sterile non-fluffy cloth.</li>
+                    <li><strong>Do Not:</strong> Do not pop blisters or apply butter/toothpaste.</li>
+                </ol>`,
+            CHOKING: `
+                <ol>
+                    <li><strong>Encourage Coughing:</strong> If they can cough, let them try to clear it.</li>
+                    <li><strong>Back Blows:</strong> Lean them forward and give 5 sharp blows between shoulder blades.</li>
+                    <li><strong>Abdominal Thrusts (Heimlich):</strong> Stand behind, wrap arms around waist, make a fist above navel, and pull Inward and Upward sharply 5 times.</li>
+                </ol>`,
+            HEART: `
+                <ol>
+                    <li><strong>Sit Down:</strong> Make them sit in a comfortable "W" position (knees bent).</li>
+                    <li><strong>Call Ambulance:</strong> Critical emergency.</li>
+                    <li><strong>Aspirin:</strong> If not allergic, chew one 300mg Aspirin effectively thins blood.</li>
+                    <li><strong>Keep Calm:</strong> Loosen tight clothing and reassure them.</li>
+                </ol>`,
+            STROKE: `
+                <p><strong>Think F.A.S.T:</strong></p>
+                <ul>
+                    <li><strong>F (Face):</strong> Is their face drooping on one side?</li>
+                    <li><strong>A (Arms):</strong> Can they lift both arms?</li>
+                    <li><strong>S (Speech):</strong> Is speech slurred?</li>
+                    <li><strong>T (Time):</strong> Time to call Ambulance immediately!</li>
+                </ul>`
+        };
+
+        function openModal(type) {
+            document.getElementById('modalTitle').innerText = type + " GUIDE";
+            document.getElementById('modalContent').innerHTML = content[type];
+            document.getElementById('aidModal').style.display = "flex";
+        }
+
+        function closeModal() {
+            document.getElementById('aidModal').style.display = "none";
+        }
+
+        // Close modal on outside click
+        window.onclick = function (event) {
+            if (event.target == document.getElementById('aidModal')) {
+                closeModal();
+            }
+        }
+
+        function logout() {
+            localStorage.removeItem("user");
+            window.location.href = "login.html";
+        }
+    </script>
+</body>
+
+</html>

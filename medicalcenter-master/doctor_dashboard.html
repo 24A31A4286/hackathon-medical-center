@@ -1,0 +1,285 @@
+<!doctype html>
+<html class="no-js" lang="zxx">
+
+<head>
+    <meta charset="utf-8">
+    <title> Doctor Dashboard - MediVerse</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="assets/css/bootstrap.min.css">
+    <link rel="stylesheet" href="assets/css/style.css">
+    <link rel="stylesheet" href="assets/css/fontawesome-all.min.css">
+    <style>
+        .stat-card {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .stat-icon {
+            font-size: 30px;
+            color: #0a4dbf;
+            background: #e3f2fd;
+            padding: 15px;
+            border-radius: 50%;
+        }
+
+        .appt-card {
+            border-left: 5px solid #0a4dbf;
+            margin-bottom: 20px;
+            background: white;
+            padding: 20px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+        }
+    </style>
+</head>
+
+<body style="background: #f4f6f9;">
+
+    <!-- HEADER -->
+    <header>
+        <div class="header-area" style="background: white; border-bottom: 1px solid #ddd;">
+            <div class="main-header">
+                <div class="container-fluid">
+                    <div class="row align-items-center py-3">
+                        <div class="col-xl-2">
+                            <img src="assets/img/logo/logo.png" alt="" style="max-height: 50px;">
+                        </div>
+                        <div class="col-xl-10 d-flex justify-content-end align-items-center">
+                            <h4 class="mr-4 mb-0" style="color: #0a4dbf;" id="wc-msg">Welcome, Doctor</h4>
+                            <div class="custom-control custom-switch mr-4">
+                                <input type="checkbox" class="custom-control-input" id="avail-switch"
+                                    onchange="toggleAvailability()">
+                                <label class="custom-control-label" for="avail-switch" id="avail-label">Offline
+                                    🔴</label>
+                            </div>
+                            <button onclick="logout()" class="btn btn-danger btn-sm">Logout</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <main class="container mt-5">
+
+        <!-- STATS -->
+        <div class="row mb-5">
+            <div class="col-md-4">
+                <div class="stat-card">
+                    <div>
+                        <h2 id="today-count">0</h2>
+                        <span class="text-muted">Appointments Today</span>
+                    </div>
+                    <i class="fas fa-calendar-check stat-icon"></i>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="stat-card">
+                    <div>
+                        <h2 id="pending-count">0</h2>
+                        <span class="text-muted">Pending Patients</span>
+                    </div>
+                    <i class="fas fa-user-clock stat-icon"></i>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="stat-card text-center d-block">
+                    <button onclick="window.open('https://meet.jit.si/MediVerse-Dr-'+user._id)"
+                        class="btn btn-primary w-100 mb-2">📹 Instant Meeting Room</button>
+                    <small class="text-muted">Share link to consult deeply</small>
+                </div>
+            </div>
+        </div>
+
+        <!-- APPOINTMENTS LIST -->
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h3 class="text-primary">🩺 Today's Appointments</h3>
+            <button onclick="init()" class="btn btn-sm btn-outline-primary">🔄 Refresh List</button>
+        </div>
+
+        <!-- PENDING APPOINTMENTS -->
+        <h4 class="text-primary mb-3">⏳ Pending Patients</h4>
+        <div id="pending-list">
+            <div class="alert alert-info">No pending appointments.</div>
+        </div>
+
+        <!-- COMPLETED APPOINTMENTS -->
+        <h4 class="text-success mt-5 mb-3">✅ Completed Checks</h4>
+        <div id="completed-list">
+            <div class="text-muted">No completed appointments today.</div>
+        </div>
+
+    </main>
+
+    <!-- Rx MODAL -->
+    <div class="modal fade" id="rxModal" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Write Prescription</h5>
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                </div>
+                <div class="modal-body">
+                    <input type="hidden" id="rx-patient-id">
+                    <input type="hidden" id="rx-appt-id">
+                    <div class="form-group">
+                        <label>Diagnosis</label>
+                        <input type="text" id="rx-diagnosis" class="form-control" placeholder="e.g. Flu">
+                    </div>
+                    <div class="form-group">
+                        <label>Medicines (Name dosage freq)</label>
+                        <textarea id="rx-meds" class="form-control" rows="3"
+                            placeholder="Paracetamol 500mg 1-0-1"></textarea>
+                    </div>
+                    <button onclick="saveRx()" class="btn btn-primary w-100">Save & Complete Appointment</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- JS -->
+    <script src="./assets/js/vendor/jquery-1.12.4.min.js"></script>
+    <script src="./assets/js/bootstrap.min.js"></script>
+    <script>
+        const API_URL = "http://localhost:5000/api";
+        const user = JSON.parse(localStorage.getItem("user"));
+        if (!user || user.role !== 'doctor') window.location.href = 'login.html';
+
+        document.getElementById("wc-msg").innerText = `Dr. ${user.name}`;
+
+        async function init() {
+            // 1. Get Stats & Appointments
+            const res = await fetch(`${API_URL}/doctor/dashboard/${user._id}`);
+            const data = await res.json();
+
+            // Stats
+            document.getElementById("today-count").innerText = data.appointments.length;
+            document.getElementById("pending-count").innerText = data.appointments.filter(a => a.status === 'Scheduled' || a.status === 'Waiting').length;
+
+            // Availability
+            const sw = document.getElementById("avail-switch");
+            sw.checked = data.doctor.isAvailable;
+            updateAvailLabel(sw.checked);
+
+            // Render List
+            // Render Lists
+            const pendingList = document.getElementById("pending-list");
+            const completedList = document.getElementById("completed-list");
+
+            pendingList.innerHTML = "";
+            completedList.innerHTML = "";
+
+            if (data.appointments.length === 0) {
+                pendingList.innerHTML = "<p>No appointments today.</p>";
+                return;
+            }
+
+            let hasPending = false;
+            let hasCompleted = false;
+
+            data.appointments.forEach(app => {
+                const isDone = app.status === 'Completed';
+                const patientName = app.patient ? app.patient.name : "Unknown Patient";
+                const patientId = app.patient ? app.patient._id : "";
+
+                const apptHtml = `
+                    <div class="appt-card" style="border-left-color: ${isDone ? '#28a745' : '#0a4dbf'};">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <div>
+                                <h5>${patientName} <span class="badge badge-${isDone ? 'secondary' : 'primary'}">Token #${app.tokenNumber}</span></h5>
+                                <span class="badge badge-${isDone ? 'success' : 'warning'}">${app.status}</span>
+                                <small class="ml-2">Time: ${app.time}</small>
+                                <p class="mb-0 text-muted"><small>${app.reason || 'No reason specified'}</small></p>
+                            </div>
+                            <div>
+                                ${!isDone ? `
+                                    <a href="https://meet.jit.si/MediVerse-${app._id}" target="_blank" class="btn btn-info btn-sm">📹 Video Call</a>
+                                    ${patientId ? `<button onclick="openRx('${patientId}', '${app._id}')" class="btn btn-primary btn-sm">📝 Prescribe</button>` : '<button disabled class="btn btn-secondary btn-sm">Guest User</button>'}
+                                ` : '<span>✅ Completed</span>'}
+                            </div>
+                        </div>
+                    </div>
+                `;
+
+                if (isDone) {
+                    completedList.innerHTML += apptHtml;
+                    hasCompleted = true;
+                } else {
+                    pendingList.innerHTML += apptHtml;
+                    hasPending = true;
+                }
+            });
+
+            if (!hasPending) pendingList.innerHTML = "<p class='text-muted'>No pending appointments. All caught up! 🎉</p>";
+            if (!hasCompleted) completedList.innerHTML = "<p class='text-muted'>No completed checks yet.</p>";
+        }
+
+        async function toggleAvailability() {
+            const isAvail = document.getElementById("avail-switch").checked;
+            updateAvailLabel(isAvail);
+            await fetch(`${API_URL}/doctor/availability`, {
+                method: "PUT",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ userId: user._id, isAvailable: isAvail })
+            });
+        }
+
+        function updateAvailLabel(isOnline) {
+            const lbl = document.getElementById("avail-label");
+            lbl.innerHTML = isOnline ? "Online 🟢" : "Offline 🔴";
+            lbl.style.color = isOnline ? "green" : "red";
+        }
+
+        // Rx Logic
+        function openRx(pid, aid) {
+            document.getElementById("rx-patient-id").value = pid;
+            document.getElementById("rx-appt-id").value = aid;
+            $('#rxModal').modal('show');
+        }
+
+        async function saveRx() {
+            const pid = document.getElementById("rx-patient-id").value;
+            const aid = document.getElementById("rx-appt-id").value;
+            const diag = document.getElementById("rx-diagnosis").value;
+            const medsRaw = document.getElementById("rx-meds").value;
+
+            // Parse meds (Simple text to object)
+            const meds = medsRaw.split('\n').map(line => {
+                return { name: line, dosage: '-', frequency: '-', duration: '-' };
+            });
+
+            // 1. Save Rx
+            const res = await fetch(`${API_URL}/prescriptions`, {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({
+                    userId: pid,
+                    doctorName: user.name,
+                    diagnosis: diag,
+                    medicines: meds
+                })
+            });
+            const savedRx = await res.json();
+
+            // 2. Mark Appointment Completed with Rx ID linked
+            await fetch(`${API_URL}/appointments/${aid}/complete`, {
+                method: "PUT",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ prescriptionId: savedRx._id })
+            });
+
+            $('#rxModal').modal('hide');
+            init(); // Refresh
+        }
+
+        function logout() { localStorage.removeItem("user"); window.location.href = "login.html"; }
+
+        init();
+    </script>
+</body>
+
+</html>

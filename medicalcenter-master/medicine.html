@@ -1,0 +1,406 @@
+<!doctype html>
+<html class="no-js" lang="zxx">
+
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <title> Medicine Scheduler - MediVerse</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="assets/css/bootstrap.min.css">
+    <link rel="stylesheet" href="assets/css/style.css">
+    <link rel="stylesheet" href="assets/css/fontawesome-all.min.css">
+</head>
+
+<body>
+    <header>
+        <div class="header-area">
+            <div class="main-header header-sticky">
+                <div class="container-fluid">
+                    <div class="row align-items-center">
+                        <div class="col-xl-2 col-lg-2 col-md-1">
+                            <div class="logo">
+                                <a href="index.html"><img src="assets/img/logo/logo.png" alt=""></a>
+                            </div>
+                        </div>
+                        <div class="col-xl-10 col-lg-10 col-md-10">
+                            <div class="menu-main d-flex align-items-center justify-content-end">
+                                <div class="main-menu f-right d-none d-lg-block">
+                                    <nav>
+                                        <ul id="navigation">
+                                            <li><a href="index.html">Dashboard</a></li>
+                                            <li><a href="appointments.html">Appointments</a></li>
+                                            <li><a href="medicine.html">Medicine</a></li>
+                                            <li><a href="organs.html">Organ Donation</a></li>
+                                            <li><a href="#" onclick="logout()">Logout</a></li>
+                                        </ul>
+                                    </nav>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <main>
+        <!-- Audio for Alarm -->
+        <!-- Audio for Alarm (Louder) -->
+        <audio id="alarm-sound" src="https://assets.mixkit.co/active_storage/sfx/2869/2869-preview.mp3" loop></audio>
+
+        <!-- ALARM MODAL -->
+        <div id="alarm-modal"
+            style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.8); z-index:9999; text-align:center; padding-top:20%;">
+            <div
+                style="background:white; display:inline-block; padding:30px; border-radius:10px; animation: pulse 1s infinite;">
+                <h1 style="color:red; font-size:50px;">⏰</h1>
+                <h2 id="alarm-msg">Time to take your Medicine!</h2>
+                <h3 id="alarm-med-name" style="color:#0a4dbf; font-weight:bold;">Paracetamol</h3>
+                <div class="mt-4">
+                    <button onclick="snoozeAlarm()" class="btn btn-warning" style="margin-right:10px;">💤 Snooze
+                        (5m)</button>
+                    <button onclick="markTaken()" class="btn btn-success">✅ Taken</button>
+                </div>
+            </div>
+        </div>
+
+        <div class="slider-area2">
+            <div class="slider-height2 d-flex align-items-center">
+                <div class="container">
+                    <div class="row">
+                        <div class="col-xl-12">
+                            <div class="hero-cap hero-cap2 text-center">
+                                <h2>My Medicine Schedule</h2>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <section class="contact-section">
+            <div class="container">
+                <div id="notification"
+                    style="padding: 15px; margin-bottom: 20px; border-radius: 5px; color: white; display: none;"></div>
+
+                <!-- COUNTDOWN TIMER -->
+                <div class="row justify-content-center mb-5">
+                    <div class="col-lg-8 text-center">
+                        <div style="background: #0a4dbf; color: white; padding: 20px; border-radius: 10px;">
+                            <h4>Next Dose In:</h4>
+                            <h1 id="countdown-timer" style="font-size: 50px; font-weight: bold; color: #fff;">--:--:--
+                            </h1>
+                            <p id="next-med-name" style="font-size: 18px; color: #e3f2fd;"></p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <!-- Add Medicine Form -->
+                    <div class="col-md-4">
+                        <div style="background: #e3f2fd; padding: 30px; border-radius: 10px;">
+                            <h3 style="color: #0a4dbf;">Add New Reminder</h3>
+                            <form onsubmit="addMedicine(event)">
+                                <input class="form-control mb-3" type="text" id="med-name" placeholder="Medicine Name"
+                                    required>
+                                <input class="form-control mb-3" type="text" id="med-dosage"
+                                    placeholder="Dosage (e.g. 1 Tablet)" required>
+                                <input class="form-control mb-3" type="time" id="med-time" required>
+                                <small>Select Days:</small>
+                                <div style="display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 15px;">
+                                    <label><input type="checkbox" name="day" value="Mon"> Mon</label>
+                                    <label><input type="checkbox" name="day" value="Tue"> Tue</label>
+                                    <label><input type="checkbox" name="day" value="Wed"> Wed</label>
+                                    <label><input type="checkbox" name="day" value="Thu"> Thu</label>
+                                    <label><input type="checkbox" name="day" value="Fri"> Fri</label>
+                                    <label><input type="checkbox" name="day" value="Sat"> Sat</label>
+                                    <label><input type="checkbox" name="day" value="Sun"> Sun</label>
+                                </div>
+                                <button type="submit" class="button boxed-btn w-100">Set Reminder</button>
+                            </form>
+                        </div>
+                    </div>
+
+                    <!-- Medicine List & History -->
+                    <div class="col-md-8">
+                        <ul class="nav nav-tabs" id="myTab" role="tablist">
+                            <li class="nav-item">
+                                <a class="nav-link active" id="schedule-tab" data-toggle="tab" href="#schedule"
+                                    role="tab">📅 Schedule</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" id="history-tab" data-toggle="tab" href="#history" role="tab">✅
+                                    History (Today)</a>
+                            </li>
+                        </ul>
+                        <div class="tab-content" id="myTabContent"
+                            style="background: white; border: 1px solid #ddd; border-top: none; padding: 20px;">
+                            <div class="tab-pane fade show active" id="schedule" role="tabpanel">
+                                <div id="medicine-list">
+                                    <p>Loading...</p>
+                                </div>
+                            </div>
+                            <div class="tab-pane fade" id="history" role="tabpanel">
+                                <div id="history-list">
+                                    <p>No intakes recorded log.</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <style>
+        @keyframes pulse {
+            0% {
+                transform: scale(1);
+            }
+
+            50% {
+                transform: scale(1.05);
+            }
+
+            100% {
+                transform: scale(1);
+            }
+        }
+    </style>
+
+    <script>
+        const API_URL = "http://localhost:5000/api";
+        const currentUser = JSON.parse(localStorage.getItem("user"));
+        const alarmSound = document.getElementById('alarm-sound');
+
+        let allMedicines = [];
+        let activeAlarmMed = null;
+        let snoozedMeds = {}; // { medId: snoozeTimeStr }
+
+        if (!currentUser) window.location.href = "login.html";
+
+        function logout() { localStorage.removeItem("user"); window.location.href = "login.html"; }
+
+        function showMsg(text, color) {
+            const box = document.getElementById("notification");
+            box.innerText = text;
+            box.style.background = color;
+            box.style.display = "block";
+            setTimeout(() => box.style.display = "none", 3000);
+        }
+
+        // --- CORE FUNCTIONS ---
+        async function loadMedicines() {
+            try {
+                const res = await fetch(`${API_URL}/medicine/${currentUser._id}`);
+                allMedicines = await res.json();
+                renderSchedule();
+                renderHistory();
+            } catch (err) { console.error(err); }
+        }
+
+        function renderSchedule() {
+            const listDiv = document.getElementById("medicine-list");
+            listDiv.innerHTML = "";
+            if (allMedicines.length === 0) { listDiv.innerHTML = "<p>No medicines.</p>"; return; }
+
+            allMedicines.forEach(med => {
+                const card = document.createElement("div");
+                card.className = "d-flex justify-content-between align-items-center border-bottom py-3";
+                card.innerHTML = `
+                    <div>
+                        <h5 class="mb-1" style="color:#0a4dbf;">${med.name}</h5>
+                        <small class="text-muted">💊 ${med.dosage} | 🕒 ${med.time}</small>
+                        <br><small>📅 ${med.days.length > 0 ? med.days.join(", ") : "Daily"}</small>
+                    </div>
+                    <button onclick="deleteMedicine('${med._id}')" class="btn btn-danger btn-sm">Delete</button>
+                `;
+                listDiv.appendChild(card);
+            });
+        }
+
+        function renderHistory() {
+            const histDiv = document.getElementById("history-list");
+            histDiv.innerHTML = "";
+            const todayStr = new Date().toDateString();
+
+            const loggedMeds = allMedicines.filter(m =>
+                m.history && m.history.some(h => new Date(h.date).toDateString() === todayStr)
+            );
+
+            if (loggedMeds.length === 0) { histDiv.innerHTML = "<p>You haven't taken any medicines today.</p>"; return; }
+
+            loggedMeds.forEach(med => {
+                // Find update time
+                const entry = med.history.reverse().find(h => new Date(h.date).toDateString() === todayStr);
+                const timeTaken = new Date(entry.date).toLocaleTimeString();
+
+                histDiv.innerHTML += `
+                    <div class="alert alert-success d-flex justify-content-between">
+                        <span><b>${med.name}</b> (${med.dosage})</span>
+                        <span>✅ Taken at ${timeTaken}</span>
+                    </div>
+                `;
+            });
+        }
+
+        async function addMedicine(e) {
+            e.preventDefault();
+            const days = Array.from(document.querySelectorAll('input[name="day"]:checked')).map(cb => cb.value);
+            const data = {
+                userId: currentUser._id,
+                name: document.getElementById("med-name").value,
+                dosage: document.getElementById("med-dosage").value,
+                time: document.getElementById("med-time").value,
+                days: days.length > 0 ? days : ["Daily"]
+            };
+            await fetch(`${API_URL}/medicine`, {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify(data)
+            });
+            e.target.reset();
+            loadMedicines();
+        }
+
+        async function deleteMedicine(id) {
+            if (!confirm("Delete?")) return;
+            await fetch(`${API_URL}/medicine/${id}`, { method: "DELETE" });
+            loadMedicines();
+        }
+
+        // --- ALARM & TIMER LOGIC ---
+        let triggeredThisMinute = new Set(); // Stores medId:Time to prevent re-triggering
+
+        // Force max volume
+        alarmSound.volume = 1.0;
+
+        setInterval(() => {
+            const now = new Date();
+            const currentTime = now.toTimeString().substring(0, 5); // HH:MM
+            const currentDay = now.toLocaleDateString('en-US', { weekday: 'short' });
+
+            // 1. Alarm Check
+            allMedicines.forEach(med => {
+                // Check if already taken today DO NOT TRUST LOCAL TIME COMPARISON BLINDLY
+                // Convert both to date string to be safe
+                const takenToday = med.history && med.history.some(h => new Date(h.date).toDateString() === now.toDateString());
+
+                if (takenToday) return;
+
+                // Check Day
+                if (med.days.includes("Daily") || med.days.includes(currentDay)) {
+                    // Check Time (Normal or Snoozed)
+                    const triggerTime = snoozedMeds[med._id] || med.time;
+                    const triggerKey = `${med._id}-${triggerTime}`;
+
+                    if (triggerTime === currentTime && !activeAlarmMed && !triggeredThisMinute.has(triggerKey)) {
+                        triggerAlarm(med, triggerKey);
+                    }
+                }
+            });
+
+            // 2. Countdown Update
+            updateCountdown();
+        }, 1000);
+
+        function triggerAlarm(med, key) {
+            activeAlarmMed = med;
+            triggeredThisMinute.add(key); // Mark as triggered so it doesn't loop
+
+            document.getElementById("alarm-modal").style.display = "block";
+            document.getElementById("alarm-msg").innerText = `Time to take ${med.dosage}`;
+            document.getElementById("alarm-med-name").innerText = med.name;
+
+            // Try playing sound
+            alarmSound.currentTime = 0;
+            alarmSound.play().catch(e => console.log("Audio prevented: Click page first"));
+        }
+
+        function snoozeAlarm() {
+            if (!activeAlarmMed) return;
+            const now = new Date();
+            now.setMinutes(now.getMinutes() + 5); // Add 5 mins
+            const snoozeTime = now.toTimeString().substring(0, 5);
+
+            snoozedMeds[activeAlarmMed._id] = snoozeTime;
+
+            stopAlarm();
+            showMsg(`💤 Snoozed for 5 mins. Next alarm at ${snoozeTime}`, "orange");
+        }
+
+        async function markTaken() {
+            if (!activeAlarmMed) return;
+
+            const medId = activeAlarmMed._id;
+            const isSnoozed = !!snoozedMeds[medId];
+
+            // Immediate UI update
+            stopAlarm();
+
+            try {
+                const status = isSnoozed ? "Taken (Snoozed)" : "Taken";
+
+                await fetch(`${API_URL}/medicine/${medId}/log`, {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ status: status })
+                });
+
+                showMsg("✅ Medicine Marked as Taken!", "green");
+
+                // Remove snooze entry if exists
+                if (snoozedMeds[medId]) delete snoozedMeds[medId];
+
+                loadMedicines(); // Refresh history
+            } catch (e) {
+                console.error(e);
+                alert("Failed to sync status, but marked locally.");
+            }
+        }
+
+        function stopAlarm() {
+            alarmSound.pause();
+            alarmSound.currentTime = 0;
+            document.getElementById("alarm-modal").style.display = "none";
+            activeAlarmMed = null;
+        }
+
+        function updateCountdown() {
+            if (allMedicines.length === 0) return;
+
+            const now = new Date();
+            let nextMed = null;
+            let minDiff = Infinity;
+
+            allMedicines.forEach(med => {
+                const [h, m] = med.time.split(":");
+                const medTime = new Date();
+                medTime.setHours(h, m, 0, 0);
+
+                if (medTime < now) medTime.setDate(medTime.getDate() + 1); // Next day
+
+                const diff = medTime - now;
+                if (diff < minDiff) {
+                    minDiff = diff;
+                    nextMed = med;
+                }
+            });
+
+            if (nextMed) {
+                const hours = Math.floor(minDiff / (1000 * 60 * 60));
+                const minutes = Math.floor((minDiff % (1000 * 60 * 60)) / (1000 * 60));
+                const seconds = Math.floor((minDiff % (1000 * 60)) / 1000);
+
+                document.getElementById("countdown-timer").innerText =
+                    `${String(hours).padStart(2, '0')}:${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
+                document.getElementById("next-med-name").innerText = `Next: ${nextMed.name} (${nextMed.dosage})`;
+            }
+        }
+
+        // Init
+        loadMedicines();
+    </script>
+</body>
+
+</html>

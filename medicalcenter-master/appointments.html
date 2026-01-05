@@ -1,0 +1,317 @@
+<!doctype html>
+<html class="no-js" lang="zxx">
+
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <title> Appointments - MediVerse</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="assets/css/bootstrap.min.css">
+    <link rel="stylesheet" href="assets/css/style.css">
+    <link rel="stylesheet" href="assets/css/fontawesome-all.min.css">
+</head>
+
+<body>
+    <header>
+        <div class="header-area">
+            <div class="main-header header-sticky">
+                <div class="container-fluid">
+                    <div class="row align-items-center">
+                        <div class="col-xl-2 col-lg-2 col-md-1">
+                            <div class="logo">
+                                <a href="index.html"><img src="assets/img/logo/logo.png" alt=""></a>
+                            </div>
+                        </div>
+                        <div class="col-xl-10 col-lg-10 col-md-10">
+                            <div class="menu-main d-flex align-items-center justify-content-end">
+                                <div class="main-menu f-right d-none d-lg-block">
+                                    <nav>
+                                        <ul id="navigation">
+                                            <li><a href="index.html">Dashboard</a></li>
+                                            <li><a href="appointments.html">Appointments</a></li>
+                                            <li><a href="prescriptions.html">Prescriptions</a></li>
+                                            <li><a href="medicine.html">Medicine</a></li>
+                                            <li><a href="organs.html">Organs</a></li>
+                                            <li><a href="#" onclick="logout()">Logout</a></li>
+                                        </ul>
+                                    </nav>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <main>
+        <div class="slider-area2">
+            <div class="slider-height2 d-flex align-items-center">
+                <div class="container">
+                    <div class="row">
+                        <div class="col-xl-12">
+                            <div class="hero-cap hero-cap2 text-center">
+                                <h2>Book an Appointment</h2>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <section class="contact-section">
+            <div class="container">
+                <div class="row justify-content-center">
+                    <div class="col-lg-8">
+                        <div id="notification"
+                            style="padding: 15px; margin-bottom: 20px; border-radius: 5px; color: white; display: none;">
+                        </div>
+
+                        <form class="form-contact" onsubmit="bookAppointment(event)"
+                            style="background: #f9f9f9; padding: 30px; border-radius: 10px;">
+                            <h3 class="text-center mb-4">Select a Doctor & Time</h3>
+                            <div class="row">
+                                <div class="col-12">
+                                    <div class="form-group">
+                                        <label>Choose Doctor (Live Availability)</label>
+                                        <select class="form-control" id="doctor-select" required style="height: 50px;">
+                                            <option value="">Loading Doctors...</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="col-sm-6">
+                                    <div class="form-group">
+                                        <label>Date</label>
+                                        <input class="form-control" type="date" id="apt-date" required>
+                                    </div>
+                                </div>
+                                <div class="col-sm-6">
+                                    <div class="form-group">
+                                        <label>Time</label>
+                                        <input class="form-control" type="time" id="apt-time" required>
+                                    </div>
+                                </div>
+                                <div class="col-12">
+                                    <div class="form-group">
+                                        <label>Reason</label>
+                                        <textarea class="form-control" id="apt-reason" placeholder="Reason for Visit..."
+                                            rows="3"></textarea>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form-group mt-3">
+                                <button type="submit" class="button button-contactForm boxed-btn w-100">Confirm
+                                    Booking</button>
+                            </div>
+                        </form>
+
+                        <!-- MY APPOINTMENTS LIST -->
+                        <div class="mt-5">
+                            <h3 class="mb-4" style="color: #0a4dbf;">My Scheduled Appointments</h3>
+                            <div
+                                style="background: white; padding: 20px; border-radius: 10px; box-shadow: 0 4px 15px rgba(0,0,0,0.05);">
+                                <table class="table table-hover">
+                                    <thead style="background: #eff6ff;">
+                                        <tr>
+                                            <th>Date & Time</th>
+                                            <th>Doctor</th>
+                                            <th>Status</th>
+                                            <th>Action</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="apt-list">
+                                        <tr>
+                                            <td colspan="4" class="text-center">Loading...</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- JS -->
+    <script src="./assets/js/vendor/jquery-1.12.4.min.js"></script>
+    <script src="./assets/js/bootstrap.min.js"></script>
+
+    <script>
+        const API_URL = "http://localhost:5000/api";
+        const currentUser = JSON.parse(localStorage.getItem("user"));
+        const aptList = document.getElementById("apt-list");
+
+        if (!currentUser) window.location.href = 'login.html';
+
+        function logout() { localStorage.removeItem("user"); window.location.href = "login.html"; }
+
+        function showMsg(text, color) {
+            const box = document.getElementById("notification");
+            box.innerText = text;
+            box.style.background = color;
+            box.style.display = "block";
+            setTimeout(() => box.style.display = "none", 5000);
+        }
+
+        // 1. LOAD DOCTORS
+        async function loadDoctors() {
+            try {
+                const res = await fetch(`${API_URL}/doctors`);
+                const doctors = await res.json();
+                const select = document.getElementById("doctor-select");
+
+                select.innerHTML = '<option value="">-- Select a Doctor --</option>';
+                doctors.forEach(doc => {
+                    const status = doc.isAvailable ? "🟢 Online" : "🔴 Offline";
+                    select.innerHTML += `<option value="${doc.name}" data-id="${doc.userId}">
+                        ${doc.name} - ${doc.specialty} [${status}]
+                    </option>`;
+                });
+            } catch (e) { console.error("Error loading doctors"); }
+        }
+
+        // 2. BOOK
+        async function bookAppointment(e) {
+            e.preventDefault();
+            const docSelect = document.getElementById("doctor-select");
+            const selectedOption = docSelect.options[docSelect.selectedIndex];
+
+            if (!selectedOption.value) { alert("Please select a doctor"); return; }
+
+            const data = {
+                patientId: currentUser._id,
+                doctorName: selectedOption.value,
+                doctorId: selectedOption.getAttribute('data-id'),
+                date: document.getElementById("apt-date").value,
+                time: document.getElementById("apt-time").value,
+                reason: document.getElementById("apt-reason").value
+            };
+
+            try {
+                const res = await fetch(`${API_URL}/appointments`, {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify(data)
+                });
+                const result = await res.json();
+
+                if (res.ok) {
+                    showMsg("✅ " + result.message, "green");
+                    loadAppointments();
+                    e.target.reset();
+                } else {
+                    showMsg("❌ " + result.message, "red");
+                }
+            } catch (e) { showMsg("Error booking", "red"); }
+        }
+
+        // 3. LOAD MY APPOINTMENTS
+        async function loadAppointments() {
+            try {
+                // Fetch using PERSISTED ID
+                const res = await fetch(`${API_URL}/appointments/${currentUser._id}`);
+                const data = await res.json();
+                aptList.innerHTML = "";
+
+                if (data.length === 0) {
+                    aptList.innerHTML = "<tr><td colspan='4' class='text-center'>No appointments yet.</td></tr>";
+                    return;
+                }
+
+                data.forEach(apt => {
+                    const dateStr = new Date(apt.date).toLocaleDateString();
+
+                    // Buttons
+                    const joinBtn = apt.status !== 'Completed' ?
+                        `<a href="https://meet.jit.si/MediVerse-${apt._id}" target="_blank" class="btn btn-sm btn-info mb-1" style="font-size: 11px;">📹 Join Call</a>` :
+                        '<span class="badge badge-success">Done</span>';
+
+                    const cancelBtn = `<button class="btn btn-danger btn-sm" style="padding: 5px 10px; font-size:11px;" onclick="cancelAppointment('${apt._id}')">Cancel</button>`;
+
+                    // View Rx Button (Only if Completed & has ID)
+                    let viewRxBtn = "";
+                    if (apt.prescriptionId) {
+                        viewRxBtn = `<button class="btn btn-primary btn-sm mt-1" style="font-size:11px;" onclick="viewRx('${apt.prescriptionId}')">📄 View Rx</button>`;
+                    }
+
+                    // Compose Actions
+                    let actionHtml = "";
+                    if (apt.status === 'Completed') {
+                        actionHtml = `<div>${joinBtn}<br>${viewRxBtn}</div>`;
+                    } else {
+                        actionHtml = `<div>${joinBtn}<br>${cancelBtn}</div>`;
+                    }
+
+                    aptList.innerHTML += `
+                        <tr>
+                            <td>${dateStr}<br><small>${apt.time}</small></td>
+                            <td>${apt.doctorName}<br><small>${apt.status}</small></td>
+                            <td>${apt.status === 'Waiting' ? `<span class="badge badge-warning">Token #${apt.tokenNumber}</span>` : `<span class="badge badge-${apt.status === 'Scheduled' ? 'primary' : 'success'}">${apt.status}</span>`}</td>
+                            <td>${actionHtml}</td>
+                        </tr>
+                    `;
+                });
+            } catch (e) { console.error(e); }
+        }
+
+        async function cancelAppointment(id) {
+            if (!confirm("Are you sure?")) return;
+            try {
+                const res = await fetch(`${API_URL}/appointments/${id}`, { method: "DELETE" });
+                if (res.ok) { showMsg("Cancelled", "orange"); loadAppointments(); }
+                else { showMsg("Failed", "red"); }
+            } catch (e) { console.error(e); }
+        }
+
+        async function viewRx(rxId) {
+            try {
+                const res = await fetch(`${API_URL}/prescriptions/details/${rxId}`);
+                const rx = await res.json();
+
+                let medsHtml = "";
+                if (rx.medicines) {
+                    rx.medicines.forEach(m => {
+                        medsHtml += `<li><b>${m.name}</b> (Dosage: ${m.dosage || '-'}, Freq: ${m.frequency || '-'})</li>`;
+                    });
+                }
+
+                const modalHtml = `
+                    <div class="modal fade" id="viewRxModal" tabindex="-1" role="dialog" style="z-index: 9999;">
+                        <div class="modal-dialog" role="document">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h5 class="modal-title">Prescription Details</h5>
+                                    <button type="button" class="close" onclick="$('#viewRxModal').modal('hide')">&times;</button>
+                                </div>
+                                <div class="modal-body">
+                                    <h6>👨‍⚕️ ${rx.doctorName || 'Doctor'}</h6>
+                                    <p><b>Diagnosis:</b> ${rx.diagnosis}</p>
+                                    <hr>
+                                    <ul>${medsHtml}</ul>
+                                    <hr>
+                                    <p><i>Date: ${new Date(rx.date).toDateString()}</i></p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                `;
+
+                // Classic jQuery Modal trick for this template
+                if (document.getElementById("viewRxModal")) document.getElementById("viewRxModal").remove();
+                document.body.insertAdjacentHTML('beforeend', modalHtml);
+                $('#viewRxModal').modal('show');
+
+            } catch (e) {
+                console.error(e);
+                alert("Could not load prescription details.");
+            }
+        }
+
+        loadDoctors();
+        loadAppointments();
+    </script>
+</body>
+
+</html>

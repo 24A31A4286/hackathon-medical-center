@@ -1,0 +1,431 @@
+<!doctype html>
+<html class="no-js" lang="zxx">
+
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <title> Organ Donation - MediVerse</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="assets/css/bootstrap.min.css">
+    <link rel="stylesheet" href="assets/css/style.css">
+    <link rel="stylesheet" href="assets/css/fontawesome-all.min.css">
+    <style>
+        /* Organ Cards */
+        .organs {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin-bottom: 40px;
+        }
+
+        .organ {
+            background: white;
+            padding: 15px;
+            border-radius: 14px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+            text-align: center;
+            border: 1px solid #eee;
+        }
+
+        .organ img {
+            width: 100%;
+            height: 130px;
+            object-fit: cover;
+            border-radius: 10px;
+            margin-bottom: 10px;
+        }
+
+        /* Tables */
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 30px;
+            background: white;
+        }
+
+        th,
+        td {
+            border: 1px solid #cbd5e1;
+            padding: 12px;
+            text-align: center;
+        }
+
+        th {
+            background: #e0e7ff;
+            color: #1e3a8a;
+        }
+
+        h2,
+        h3 {
+            color: #1e40af;
+            text-align: center;
+            margin-bottom: 20px;
+        }
+    </style>
+</head>
+
+<body>
+    <header>
+        <div class="header-area">
+            <div class="main-header header-sticky">
+                <div class="container-fluid">
+                    <div class="row align-items-center">
+                        <div class="col-xl-2 col-lg-2 col-md-1">
+                            <div class="logo">
+                                <a href="index.html"><img src="assets/img/logo/logo.png" alt=""></a>
+                            </div>
+                        </div>
+                        <div class="col-xl-10 col-lg-10 col-md-10">
+                            <div class="menu-main d-flex align-items-center justify-content-end">
+                                <div class="main-menu f-right d-none d-lg-block">
+                                    <nav>
+                                        <ul id="navigation">
+                                            <li><a href="index.html">Dashboard</a></li>
+                                            <li><a href="appointments.html">Appointments</a></li>
+                                            <li><a href="medicine.html">Medicine</a></li>
+                                            <li><a href="organs.html">Organ Donation</a></li>
+                                            <li><a href="#" onclick="logout()">Logout</a></li>
+                                        </ul>
+                                    </nav>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <main>
+        <div class="slider-area2">
+            <div class="slider-height2 d-flex align-items-center">
+                <div class="container">
+                    <div class="row">
+                        <div class="col-xl-12">
+                            <div class="hero-cap hero-cap2 text-center">
+                                <h2>Organ Donation - Give Life</h2>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Rich Content Section -->
+        <section style="padding: 50px 20px; background: #f0f9ff;">
+            <div class="container">
+                <!-- Organs Grid -->
+                <!-- Dynamic Live Availability Dashboard -->
+                <div class="row align-items-center mb-4">
+                    <div class="col-lg-12">
+                        <div class="section-tittle text-center">
+                            <span>Real-Time Status</span>
+                            <h2>Live Organ Availability</h2>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="organs" id="organ-dashboard">
+                    <!-- Cards will be injected here by JS -->
+                    <div class="text-center w-100">
+                        <i class="fas fa-spinner fa-spin fa-2x"></i> Loading status...
+                    </div>
+                </div>
+
+                <!-- Eligibility Tables -->
+                <div class="row">
+                    <div class="col-md-6">
+                        <h3>Organ Donation Criteria</h3>
+                        <table>
+                            <tr>
+                                <th>Criteria</th>
+                                <th>Details</th>
+                            </tr>
+                            <tr>
+                                <td>Age</td>
+                                <td>18 – 65 years</td>
+                            </tr>
+                            <tr>
+                                <td>Health</td>
+                                <td>No major infections</td>
+                            </tr>
+                            <tr>
+                                <td>Consent</td>
+                                <td>Mandatory</td>
+                            </tr>
+                        </table>
+                    </div>
+                    <div class="col-md-6">
+                        <h3>Blood Donation Criteria</h3>
+                        <table>
+                            <tr>
+                                <th>Criteria</th>
+                                <th>Details</th>
+                            </tr>
+                            <tr>
+                                <td>Age</td>
+                                <td>18 – 60 years</td>
+                            </tr>
+                            <tr>
+                                <td>Weight</td>
+                                <td>Above 50kg</td>
+                            </tr>
+                            <tr>
+                                <td>Hemoglobin</td>
+                                <td>12.5 g/dL+</td>
+                            </tr>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="contact-section">
+            <div class="container">
+                <div id="notification"
+                    style="padding: 15px; margin-bottom: 20px; border-radius: 5px; color: white; display: none; text-align:center;">
+                </div>
+
+                <div class="row">
+                    <!-- Donor Column -->
+                    <div class="col-md-6">
+                        <div style="background: #ffebee; padding: 30px; border-radius: 10px;">
+                            <h3 style="color: #d32f2f;">Register as Donor</h3>
+                            <form onsubmit="registerDonor(event)">
+                                <input class="form-control mb-3" type="text" id="donor-name" placeholder="Full Name"
+                                    required>
+                                <input class="form-control mb-3" type="number" id="donor-age" placeholder="Age"
+                                    required>
+                                <select class="form-control mb-3" id="donor-blood" required>
+                                    <option value="">Select Blood Group</option>
+                                    <option value="A+">A+</option>
+                                    <option value="A-">A-</option>
+                                    <option value="B+">B+</option>
+                                    <option value="B-">B-</option>
+                                    <option value="O+">O+</option>
+                                    <option value="O-">O-</option>
+                                    <option value="AB+">AB+</option>
+                                    <option value="AB-">AB-</option>
+                                </select>
+                                <input class="form-control mb-3" type="text" id="donor-organ"
+                                    placeholder="Organ (e.g. Kidney)" required>
+                                <input class="form-control mb-3" type="text" id="donor-contact"
+                                    placeholder="Contact Number" required>
+                                <button type="submit" class="button boxed-btn"
+                                    style="background: #d32f2f; color: white;">Register</button>
+                            </form>
+                        </div>
+                    </div>
+
+                    <!-- Recipient Column -->
+                    <div class="col-md-6">
+                        <div style="background: #e3f2fd; padding: 30px; border-radius: 10px;">
+                            <h3 style="color: #0a4dbf;">Request an Organ</h3>
+                            <form onsubmit="requestOrgan(event)">
+                                <input class="form-control mb-3" type="text" id="req-name" placeholder="Patient Name"
+                                    required>
+                                <select class="form-control mb-3" id="req-blood" required>
+                                    <option value="">Select Blood Group</option>
+                                    <option value="A+">A+</option>
+                                    <option value="A-">A-</option>
+                                    <option value="B+">B+</option>
+                                    <option value="B-">B-</option>
+                                    <option value="O+">O+</option>
+                                    <option value="O-">O-</option>
+                                    <option value="AB+">AB+</option>
+                                    <option value="AB-">AB-</option>
+                                </select>
+                                <input class="form-control mb-3" type="text" id="req-organ" placeholder="Organ Needed"
+                                    required>
+                                <select class="form-control mb-3" id="req-urgency">
+                                    <option value="Medium">Urgency: Medium</option>
+                                    <option value="High">Urgency: High</option>
+                                    <option value="Critical">Urgency: Critical</option>
+                                </select>
+                                <input class="form-control mb-3" type="text" id="req-contact"
+                                    placeholder="Contact Number" required>
+                                <button type="submit" class="button boxed-btn"
+                                    style="background: #0a4dbf; color: white;">Find Availability</button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Match Results -->
+                <div id="match-results"
+                    style="margin-top: 30px; display: none; background: #e8f5e9; padding: 20px; border-radius: 8px;">
+                    <h4>🔍 Available Donors Found:</h4>
+                    <ul id="match-list" style="margin-left: 20px;"></ul>
+                </div>
+
+            </div>
+        </section>
+    </main>
+
+    <script>
+        const API_URL = "http://localhost:5000/api";
+        const currentUser = JSON.parse(localStorage.getItem("user"));
+        if (!currentUser) window.location.href = "login.html";
+
+        function logout() {
+            localStorage.removeItem("user");
+            window.location.href = "login.html";
+        }
+
+        function showMsg(text, color) {
+            const box = document.getElementById("notification");
+            box.innerText = text;
+            box.style.background = color;
+            box.style.display = "block";
+            setTimeout(() => box.style.display = "none", 5000);
+        }
+
+        async function registerDonor(e) {
+            e.preventDefault();
+            const formData = {
+                userId: currentUser._id,
+                fullName: document.getElementById("donor-name").value,
+                age: document.getElementById("donor-age").value,
+                bloodGroup: document.getElementById("donor-blood").value,
+                organ: document.getElementById("donor-organ").value,
+                contactNumber: document.getElementById("donor-contact").value
+            };
+
+            try {
+                const res = await fetch(`${API_URL}/organ/donate`, {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify(formData)
+                });
+                if (res.ok) {
+                    showMsg("❤️ Thank you for registering as a donor!", "green");
+                    // Refresh dashboard immediately
+                    fetchOrganAvailability();
+                } else {
+                    showMsg("❌ Error registering", "red");
+                }
+            } catch (err) { showMsg("❌ Server Error", "red"); }
+        }
+
+        async function requestOrgan(e) {
+            e.preventDefault();
+            const bloodGroup = document.getElementById("req-blood").value;
+            const organ = document.getElementById("req-organ").value;
+
+            const formData = {
+                userId: currentUser._id,
+                fullName: document.getElementById("req-name").value,
+                age: 0,
+                bloodGroup,
+                organRequired: organ,
+                medicalUrgency: document.getElementById("req-urgency").value,
+                contactNumber: document.getElementById("req-contact").value
+            };
+
+            try {
+                await fetch(`${API_URL}/organ/request`, {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify(formData)
+                });
+                showMsg("📝 Checking for matches...", "#0a4dbf");
+                checkMatches(bloodGroup, organ);
+            } catch (err) { showMsg("❌ Server Error", "red"); }
+        }
+
+        async function checkMatches(blood, organ) {
+            try {
+                const res = await fetch(`${API_URL}/organ/matches?bloodGroup=${encodeURIComponent(blood)}&organ=${encodeURIComponent(organ)}`);
+                const data = await res.json();
+                const listMap = document.getElementById("match-list");
+                const resultsDiv = document.getElementById("match-results");
+                listMap.innerHTML = "";
+
+                resultsDiv.style.display = "block";
+                if (data.count > 0) {
+                    data.matches.forEach(donor => {
+                        const li = document.createElement("li");
+                        li.innerHTML = `<b>${donor.fullName}</b> matches! (Contact: ${donor.contactNumber})`;
+                        li.style.color = "green";
+                        listMap.appendChild(li);
+                    });
+                    showMsg(`✅ Found ${data.count} potential donor(s)!`, "green");
+                } else {
+                    listMap.innerHTML = "<li style='color: red;'>No direct matches found yet. We will notify you when a donor is available.</li>";
+                }
+            } catch (err) { console.error(err); }
+        }
+
+        // --- New Dashboard Logic ---
+        const ORGAN_IMAGES = {
+            "Heart": "assets/img/gallery/heart.jpg",
+            "Kidney": "assets/img/gallery/kidney.jpg",
+            "Lungs": "assets/img/gallery/lungs.jpg",
+            "Liver": "assets/img/gallery/liver.jpg",
+            "Eyes": "assets/img/gallery/eyes.jpg",
+            "Pancreas": "assets/img/gallery/pancreas.jpg"
+        };
+
+        async function fetchOrganAvailability() {
+            try {
+                const res = await fetch(`${API_URL}/organ/availability`);
+                if (!res.ok) throw new Error("Failed to fetch");
+                const data = await res.json(); // { "Heart": 2, ... }
+
+                const container = document.getElementById("organ-dashboard");
+                container.innerHTML = "";
+
+                // List of organs we want to display even if count is 0
+                const organs = ["Heart", "Kidney", "Lungs", "Liver", "Eyes", "Pancreas"];
+
+                organs.forEach(organ => {
+                    const count = data[organ] || 0;
+                    const badgeColor = count > 0 ? "#4caf50" : "#9e9e9e";
+                    const statusText = count > 0 ? `${count} Available` : "None Available";
+
+                    const card = document.createElement("div");
+                    card.className = "organ";
+                    card.innerHTML = `
+                         <div style="position: relative;">
+                            <img src="${ORGAN_IMAGES[organ]}" alt="${organ}">
+                            <div style="
+                                position: absolute; 
+                                top: 10px; 
+                                right: 10px; 
+                                background: ${badgeColor}; 
+                                color: white; 
+                                padding: 5px 10px; 
+                                border-radius: 20px; 
+                                font-size: 12px; 
+                                font-weight: bold;
+                                box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+                            ">
+                                ${statusText}
+                            </div>
+                         </div>
+                         <h4 style="margin-top: 10px; color: #1e40af;">${organ}</h4>
+                         <button onclick="requestSpecific('${organ}')" class="btn btn-sm" style="margin-top:5px; padding: 15px 10px; font-size: 12px;">Request</button>
+                    `;
+                    container.appendChild(card);
+                });
+
+            } catch (err) {
+                console.error("Dashboard error:", err);
+            }
+        }
+
+        function requestSpecific(organName) {
+            document.getElementById("req-organ").value = organName;
+            document.getElementById("req-organ").focus();
+            showMsg(`👇 Please fill the form to request a ${organName}`, "#0a4dbf");
+            window.scrollTo({ top: document.querySelector(".contact-section").offsetTop, behavior: 'smooth' });
+        }
+
+        // Init
+        fetchOrganAvailability();
+        // Refresh every 10 seconds for real-time feel
+        setInterval(fetchOrganAvailability, 10000);
+    </script>
+</body>
+
+</html>

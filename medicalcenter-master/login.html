@@ -1,0 +1,204 @@
+<!doctype html>
+<html class="no-js" lang="zxx">
+
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <title> Login - MediVerse</title>
+    <meta name="description" content="">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="assets/css/bootstrap.min.css">
+    <link rel="stylesheet" href="assets/css/style.css">
+    <style>
+        body {
+            background: #f0f4f8;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+        }
+
+        .auth-container {
+            background: white;
+            padding: 40px;
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            width: 100%;
+            max-width: 400px;
+            text-align: center;
+        }
+
+        .auth-container h2 {
+            color: #0a4dbf;
+            margin-bottom: 20px;
+        }
+
+        .auth-container input,
+        .auth-container select {
+            width: 100%;
+            padding: 12px;
+            margin: 10px 0;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+        }
+
+        .auth-container button {
+            width: 100%;
+            padding: 12px;
+            background: #0a4dbf;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            font-size: 16px;
+            margin-top: 10px;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+
+        .auth-container button:hover {
+            background: #083a8c;
+        }
+
+        .toggle-link {
+            margin-top: 15px;
+            display: block;
+            color: #666;
+            cursor: pointer;
+        }
+
+        #notification {
+            position: fixed;
+            top: -100px;
+            left: 50%;
+            transform: translateX(-50%);
+            padding: 15px 30px;
+            border-radius: 8px;
+            color: white;
+            transition: top 0.4s;
+            z-index: 1000;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div id="notification"></div>
+
+    <div class="auth-container">
+        <div class="logo" style="margin-bottom: 20px;">
+            <img src="assets/img/logo/logo.png" alt="MediVerse" style="max-height: 50px;">
+        </div>
+
+        <!-- Login Form -->
+        <div id="login-form">
+            <h2>Welcome Back</h2>
+            <form onsubmit="login(event)">
+                <input type="email" id="login-email" placeholder="Email Address" required>
+                <input type="password" id="login-password" placeholder="Password" required>
+                <button type="submit">Login</button>
+            </form>
+            <span class="toggle-link" onclick="toggleAuth()">New here? Create an Account</span>
+        </div>
+
+        <!-- Signup Form -->
+        <div id="signup-form" style="display: none;">
+            <h2>Join MediVerse</h2>
+            <form onsubmit="signup(event)">
+                <input type="text" id="signup-name" placeholder="Full Name" required>
+                <input type="email" id="signup-email" placeholder="Email Address" required>
+                <input type="password" id="signup-password" placeholder="Password" required>
+                <select id="signup-role">
+                    <option value="patient">I am a Patient</option>
+                    <option value="doctor">I am a Doctor</option>
+                </select>
+                <button type="submit">Sign Up</button>
+            </form>
+            <span class="toggle-link" onclick="toggleAuth()">Already have an account? Login</span>
+        </div>
+    </div>
+
+    <script>
+        const API_URL = "http://localhost:5000/api";
+
+        function showMsg(text, color) {
+            const box = document.getElementById("notification");
+            box.innerText = text;
+            box.style.background = color;
+            box.style.top = "20px";
+            setTimeout(() => box.style.top = "-100px", 3000);
+        }
+
+        function toggleAuth() {
+            const loginForm = document.getElementById("login-form");
+            const signupForm = document.getElementById("signup-form");
+            if (loginForm.style.display === "none") {
+                loginForm.style.display = "block";
+                signupForm.style.display = "none";
+            } else {
+                loginForm.style.display = "none";
+                signupForm.style.display = "block";
+            }
+        }
+
+        async function login(e) {
+            e.preventDefault();
+            const email = document.getElementById("login-email").value;
+            const password = document.getElementById("login-password").value;
+
+            try {
+                const res = await fetch(`${API_URL}/auth/login`, {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ email, password })
+                });
+                const data = await res.json();
+
+                if (res.ok) {
+                    localStorage.setItem("user", JSON.stringify(data));
+                    showMsg("✅ Login Successful! Redirecting...", "green");
+
+                    setTimeout(() => {
+                        if (data.role === 'doctor') {
+                            window.location.href = "doctor_dashboard.html";
+                        } else {
+                            window.location.href = "index.html";
+                        }
+                    }, 1500);
+                } else {
+                    showMsg(`❌ ${data.message}`, "red");
+                }
+            } catch (err) {
+                showMsg("❌ Server Error", "red");
+            }
+        }
+
+        async function signup(e) {
+            e.preventDefault();
+            const name = document.getElementById("signup-name").value;
+            const email = document.getElementById("signup-email").value;
+            const password = document.getElementById("signup-password").value;
+            const role = document.getElementById("signup-role").value;
+
+            try {
+                const res = await fetch(`${API_URL}/auth/signup`, {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ name, email, password, role })
+                });
+                const data = await res.json();
+
+                if (res.ok) {
+                    localStorage.setItem("user", JSON.stringify(data));
+                    showMsg("✅ Account Created! Redirecting...", "green");
+                    setTimeout(() => window.location.href = "index.html", 1500);
+                } else {
+                    showMsg(`❌ ${data.message}`, "red");
+                }
+            } catch (err) {
+                showMsg("❌ Server Error", "red");
+            }
+        }
+    </script>
+</body>
+
+</html>
